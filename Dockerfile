@@ -1,16 +1,19 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
-WORKDIR /app
+# https://hub.docker.com/_/microsoft-dotnet
+FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+WORKDIR /source
 
-# Copy everything
-COPY . /
-# Restore as distinct layers
+# copy csproj and restore as distinct layers
+COPY *.sln .
+COPY TodoApi/*.csproj ./TodoApi/
 RUN dotnet restore
-# Build and publish a release
-RUN dotnet publish -c Release -o out
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+# copy everything else and build app
+COPY TodoApi/. ./TodoApi/
+WORKDIR /source/TodoApi
+RUN dotnet publish -c release -o /app --no-restore
+
+# final stage/image
+FROM mcr.microsoft.com/dotnet/aspnet:3.1
 WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "HelloWorldApp.dll"]
-ENV DOTNET_EnableDiagnostics=0
+COPY --from=build /app ./
+ENTRYPOINT ["dotnet", "TodoApi.dll"]
