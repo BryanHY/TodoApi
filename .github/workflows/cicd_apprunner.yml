@@ -50,7 +50,7 @@ jobs:
         uses: awslabs/amazon-app-runner-deploy@main        
         with:
           service: todoapi-cd
-          image: ${{ steps.build-image.outputs.image }}          
+          image: ${{ jobs.build.steps.build-image.outputs.image }}          
           access-role-arn: ${{ secrets.ROLE_ARN }}        
           region: ${{ secrets.AWS_REGION }}
           cpu : 1
