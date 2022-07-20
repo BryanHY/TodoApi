@@ -11,6 +11,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -50,7 +53,7 @@ jobs:
         uses: awslabs/amazon-app-runner-deploy@main        
         with:
           service: todoapi-cd
-          image: ${{ jobs.build.steps.build-image.outputs.image }}          
+          image: ${{ needs.build.outputs.image }}          
           access-role-arn: ${{ secrets.ROLE_ARN }}        
           region: ${{ secrets.AWS_REGION }}
           cpu : 1
