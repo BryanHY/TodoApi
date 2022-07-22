@@ -56,14 +56,10 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}     
       - name: Deploy to App Runner
         id: deploy-apprunner
-        env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG: latest
         uses: awslabs/amazon-app-runner-deploy@main        
         with:
           service: todoapi-cd
-          image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG # ${{ needs.build.outputs.image }}          
+          image: ${{ secrets.ECR_REGISTRY }}/{{ secrets.ECR_REPOSITORY }}:latest # ${{ needs.build.outputs.image }}          
           access-role-arn: ${{ secrets.ROLE_ARN }}        
           region: ${{ secrets.AWS_REGION }}
           cpu : 1
