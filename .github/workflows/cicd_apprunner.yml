@@ -5,6 +5,14 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'P<enter level>'
+      tags:
+        description: 'Test scenario tags'
 
 jobs:
   build:
@@ -76,4 +84,7 @@ jobs:
           wait-for-service-stability: true
       
       - name: App Runner output
-        run: echo "App runner output ${{ steps.deploy-apprunner.outputs.service-id }}" 
+        run: |
+          echo "App runner output ${{ steps.deploy-apprunner.outputs.service-id }}"
+          echo "--- Workflow completed ---"
+          echo "Log level: ${{ github.event.inputs.logLevel }}"
